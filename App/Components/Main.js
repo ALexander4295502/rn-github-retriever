@@ -5,8 +5,11 @@ import {
   StyleSheet,
   TextInput,
   TouchableHighlight,
-  ActivityIndicatorIOS,
+  ActivityIndicator,
 } from 'react-native';
+
+import Api from '../Utils/Api';
+import Dashboard from './Dashboard'
 
 const styles = StyleSheet.create({
   mainContainer: {
@@ -67,15 +70,37 @@ export default class Main extends Component {
     });
   }
   handleSubmit(){
-    // update out indicator IOS spinner
     this.setState({
       isLoading: true
     });
+    Api.getBio(this.state.username)
+      .then((res) => {
+        if(res.message === 'Not Found'){
+          this.setState({
+            error: 'User not found',
+            isLoading: false
+          })
+        } else {
+          this.props.navigator.push({
+            title: res.name || "Select an Option",
+            component: Dashboard,
+            passProps: {userInfo: res}
+          });
+          this.setState({
+            isLoading: false,
+            error: false,
+            username: ''
+          });
+        }
+      });
     console.log('SUBMIT', this.state.username);
     // fetch data from github
     // reroute to the next passing that github information
   }
   render() {
+    var showErr = (
+      this.state.error ? <Text> {this.state.error} </Text> : <View/>
+    );
     return (
       <View style={styles.mainContainer}>
         <Text style={styles.title}>Search for a Github User</Text>
@@ -91,6 +116,12 @@ export default class Main extends Component {
         >
           <Text style={styles.buttonText}>SEARCH</Text>
         </TouchableHighlight>
+        <ActivityIndicator
+          animating = {this.state.isLoading}
+          color = '#111'
+          size = "large">
+        </ActivityIndicator>
+        {showErr}
       </View>
     )
   }

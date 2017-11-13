@@ -6,9 +6,7 @@
 
 import React, { Component } from 'react';
 import {
-  Platform,
   StyleSheet,
-  Text,
   NavigatorIOS,
 } from 'react-native';
 
@@ -23,8 +21,6 @@ const styles = StyleSheet.create({
 
 export default class App extends Component<{}> {
   render() {
-    console.log("hello there");
-    debugger;
     return (
       <NavigatorIOS
         style={styles.container}

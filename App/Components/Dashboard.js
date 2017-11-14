@@ -7,6 +7,9 @@ import {
   TouchableHighlight
 } from 'react-native';
 import Profile from "./Profile";
+import Repositories from "./Repositories";
+import Api from '../Utils/Api';
+import Notes from './Notes';
 
 const styles = StyleSheet.create({
   container: {
@@ -31,9 +34,9 @@ export default class Dashboard extends Component {
       justifyContent: 'center',
       flex: 1
     };
-    if(btn == 0) {
+    if(btn === 0) {
       obj.backgroundColor = '#48BBEC';
-    } else if(btn == 1){
+    } else if(btn === 1){
       obj.backgroundColor = '#E77AAE';
     } else {
       obj.backgroundColor = '#758BF4';
@@ -48,10 +51,31 @@ export default class Dashboard extends Component {
     });
   }
   goToRepos() {
-    console.log('Going to Repos Page');
+    Api.getRepos(this.props.userInfo.login)
+      .then((res) => {
+        this.props.navigator.push({
+          title: 'Repos',
+          component: Repositories,
+          passProps: {
+            userInfo: this.props.userInfo,
+            repos: res
+          }
+        });
+      })
   }
   goToNotes() {
-    console.log('Going to Notes Page');
+    Api.getNotes(this.props.userInfo.login)
+      .then((res) => {
+        res = res || {};
+        this.props.navigator.push({
+          component: Notes,
+          title: 'Notes',
+          passProps: {
+            notes: res,
+            userInfo: this.props.userInfo
+          }
+        });
+      })
   }
   render(){
     return (
